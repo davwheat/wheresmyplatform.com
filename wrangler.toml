@@ -1,10 +1,11 @@
 name = "wheres-my-platform"
 
-compatibility_date = "2024-05-21"
+compatibility_date = "2025-07-17"
 compatibility_flags = ["nodejs_compat"]
-
+preview_urls = true
 main = "api/worker.ts"
 
 [assets]
 directory = "./html"
 not_found_handling = "404-page"
+binding = "ASSETS"
