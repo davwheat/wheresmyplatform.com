@@ -159,11 +159,10 @@ async function updatePlatformingData(abortController) {
           const mousePoint = e.point
           const distance = Math.sqrt(Math.pow(stationCoordsPx.x - mousePoint.x, 2) + Math.pow(stationCoordsPx.y - mousePoint.y, 2))
           
-          if (distance > 10) {
+          if (distance > 10.5) {
+            popup.remove()
             return
           }
-
-          map.getCanvas().style.cursor = 'pointer'
 
           const coordinates = e.features[0].geometry.coordinates.slice()
           const name = e.features[0].properties.name
@@ -176,7 +175,6 @@ async function updatePlatformingData(abortController) {
         })
 
         map.on('mouseleave', `layer-${stn.crs}`, () => {
-          map.getCanvas().style.cursor = ''
           popup.remove()
         })
       } else {
