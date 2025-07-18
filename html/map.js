@@ -154,7 +154,15 @@ async function updatePlatformingData(abortController) {
           className: 'station-popup',
         })
 
-        map.on('mouseenter', `layer-${stn.crs}`, e => {
+        map.on('mousemove', `layer-${stn.crs}`, e => {
+          const stationCoordsPx = map.project(e.features[0].geometry.coordinates)
+          const mousePoint = e.point
+          const distance = Math.sqrt(Math.pow(stationCoordsPx.x - mousePoint.x, 2) + Math.pow(stationCoordsPx.y - mousePoint.y, 2))
+          
+          if (distance > 10) {
+            return
+          }
+
           map.getCanvas().style.cursor = 'pointer'
 
           const coordinates = e.features[0].geometry.coordinates.slice()
@@ -170,14 +178,6 @@ async function updatePlatformingData(abortController) {
         map.on('mouseleave', `layer-${stn.crs}`, () => {
           map.getCanvas().style.cursor = ''
           popup.remove()
-        })
-
-        map.on('mousemove', `layer-${stn.crs}`, e => {
-          const coordinates = e.features[0].geometry.coordinates.slice()
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
-          }
-          popup.setLngLat(coordinates)
         })
       } else {
         marker.__platformPct = stn.platformedPercentage
