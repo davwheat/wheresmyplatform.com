@@ -124,6 +124,9 @@ async function updatePlatformingData(abortController) {
             features: [
               {
                 type: 'Feature',
+                properties: {
+                  name: stn.name,
+                },
                 geometry: {
                   type: 'Point',
                   coordinates: [stn.lon, stn.lat],
@@ -143,6 +146,38 @@ async function updatePlatformingData(abortController) {
             'text-allow-overlap': true,
             'text-ignore-placement': true,
           },
+        })
+
+        const popup = new maplibregl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          className: 'station-popup',
+        })
+
+        map.on('mouseenter', `layer-${stn.crs}`, e => {
+          map.getCanvas().style.cursor = 'pointer'
+
+          const coordinates = e.features[0].geometry.coordinates.slice()
+          const name = e.features[0].properties.name
+
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+          }
+
+          popup.setLngLat(coordinates).setHTML(name).addTo(map)
+        })
+
+        map.on('mouseleave', `layer-${stn.crs}`, () => {
+          map.getCanvas().style.cursor = ''
+          popup.remove()
+        })
+
+        map.on('mousemove', `layer-${stn.crs}`, e => {
+          const coordinates = e.features[0].geometry.coordinates.slice()
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+          }
+          popup.setLngLat(coordinates)
         })
       } else {
         marker.__platformPct = stn.platformedPercentage

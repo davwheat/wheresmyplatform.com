@@ -127,6 +127,14 @@ const StationsToCheck = [
     tocFilter: null,
     timeWindow: 180,
   },
+  {
+    crs: 'EPH',
+    name: 'Elephant & Castle',
+    lat: 51.49405,
+    lon: -0.09869,
+    tocFilter: null,
+    timeWindow: 180,
+  },
 ]
 
 async function getStationsState(env) {
