@@ -16,6 +16,11 @@
     <link href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css" rel="stylesheet" />
 
     <script src="map.js" defer></script>
+
+    <!-- Preload svgs -->
+    <link rel="preload" href="/check.svg" as="image" />
+    <link rel="preload" href="/error.svg" as="image" />
+    <link rel="preload" href="/warning.svg" as="image" />
   </head>
   <body>
     <div id="topPage">
@@ -27,7 +32,7 @@
       <div id="map"></div>
 
       <div id="scrollEncourager">
-        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#000">
+        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="currentColor">
           <path
             d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"
           />
@@ -40,7 +45,7 @@
         <h2>What's going on?</h2>
 
         <p>
-          The rail industry uses a system called <a href="https://www.nationalrail.co.uk/developers/darwin-data-feeds/">Darwin</a> to provide
+          The GB rail industry uses a system called <a href="https://www.nationalrail.co.uk/developers/darwin-data-feeds/">Darwin</a> to provide
           real-time information about trains, including platform numbers, delays, cancellations, diversions and more. Typically this information
           is detected automatically when trains enter or exit stations, but at larger stations platform information is artificially hidden until
           a predetermined "boarding time".
@@ -71,15 +76,44 @@
           <a href="https://wiki.openraildata.com/index.php/Projects">our projects</a>.
         </p>
       </section>
+
+      <section>
+        <h2>The data</h2>
+
+        <p>
+          This table shows the London stations and what proportion of recent services had platform data associated with them, excluding cancelled
+          services and services which have not yet departed.
+        </p>
+
+        <table id="stationList" class="loading">
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Has platform info</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="2">
+                <div class="loader"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
     </main>
 
     <footer>
+      <img id="nre" src="/nre_powered.png" alt="Powered by National Rail Enquiries" />
+      
       <p>
         Platform information (or lack thereof) provided
-        <a href="https://www.nationalrail.co.uk/developers/darwin-data-feeds/">under license by National Rail</a>.
+        <a href="https://www.nationalrail.co.uk/developers/darwin-data-feeds/">under license by National Rail</a>
       </p>
 
-      <img id="nre" src="/nre_powered.png" alt="Powered by National Rail Enquiries" />
+      <p>
+        <a href="https://github.com/davwheat/wheresmyplatform.com">View the source code</a>
+      </p>
     </footer>
   </body>
 </html>

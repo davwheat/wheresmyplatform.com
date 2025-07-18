@@ -5,7 +5,7 @@ const StationsToCheck = [
     lat: 51.53111,
     lon: -0.123,
     tocFilter: null,
-    timeWindow: 360,
+    timeWindow: 400,
   },
   {
     crs: 'STP',
@@ -13,7 +13,7 @@ const StationsToCheck = [
     lat: 51.53336,
     lon: -0.12746,
     tocFilter: null,
-    timeWindow: 240,
+    timeWindow: 180,
   },
   {
     crs: 'PAD',
@@ -29,7 +29,7 @@ const StationsToCheck = [
     lat: 51.50368,
     lon: -0.0839,
     tocFilter: null,
-    timeWindow: 180,
+    timeWindow: 90,
   },
   {
     crs: 'WAT',
@@ -44,7 +44,8 @@ const StationsToCheck = [
     name: 'Liverpool Street',
     lat: 51.51864,
     lon: -0.081,
-    tocFilter: null,
+    // Cannot filter by more than one TOC, so the Overground can be irrelevant
+    tocFilter: 'LE',
     timeWindow: 180,
   },
   {
@@ -69,7 +70,7 @@ const StationsToCheck = [
     lat: 51.52304,
     lon: -0.16291,
     tocFilter: null,
-    timeWindow: 360,
+    timeWindow: 480,
   },
   {
     crs: 'CHX',
@@ -85,7 +86,7 @@ const StationsToCheck = [
     lat: 51.51131,
     lon: -0.07732,
     tocFilter: null,
-    timeWindow: 300,
+    timeWindow: 600,
   },
   {
     crs: 'CST',
@@ -109,7 +110,7 @@ const StationsToCheck = [
     lat: 51.51405,
     lon: -0.10348,
     tocFilter: null,
-    timeWindow: 300,
+    timeWindow: 260,
   },
   {
     crs: 'MOG',
@@ -117,7 +118,7 @@ const StationsToCheck = [
     lat: 51.5185,
     lon: -0.08841,
     tocFilter: null,
-    timeWindow: 300,
+    timeWindow: 480,
   },
   {
     crs: 'WAE',
@@ -133,9 +134,20 @@ const StationsToCheck = [
     lat: 51.49405,
     lon: -0.09869,
     tocFilter: null,
-    timeWindow: 180,
+    timeWindow: 300,
   },
 ]
+
+const fmt = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/London',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+})
 
 async function getStationsState(env) {
   const apiKey = env.RDM_LDBSVWS_GetDepBoardWithDetails_API_KEY
@@ -143,17 +155,15 @@ async function getStationsState(env) {
   const promises = StationsToCheck.map(s =>
     (async () => {
       try {
-        const now = new Date(Date.now() - s.timeWindow * 60 * 1000)
-        const londonTime = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Europe/London',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }).formatToParts(now)
+        let nownow = Date.now()
+
+        // If it's before 6am, fetch data for the previous day
+        if ((fmt.formatToParts(new Date(nownow)).find(p => p.type === 'hour')?.value ?? '99') < '06') {
+          nownow -= 9 * 60 * 60 * 1000 // Subtract 9 hours
+        }
+
+        const now = new Date(nownow - s.timeWindow * 60 * 1000)
+        const londonTime = fmt.formatToParts(now)
         const nowStr = `${londonTime.find(p => p.type === 'year')?.value}${londonTime.find(p => p.type === 'month')?.value}${londonTime.find(p => p.type === 'day')?.value}T${londonTime.find(p => p.type === 'hour')?.value}${londonTime.find(p => p.type === 'minute')?.value}${londonTime.find(p => p.type === 'second')?.value}`
 
         console.log(`Fetching data for ${s.crs} at ${nowStr}...`)
@@ -171,7 +181,7 @@ async function getStationsState(env) {
           `https://api1.raildata.org.uk/1010-live-departure-board---staff-version1_0/LDBSVWS/api/20220120/GetDepartureBoardByCRS/${s.crs}/${nowStr}?${query}`,
           {
             cf: {
-              cacheTtl: 60,
+              cacheTtl: 15 * 60,
               cacheEverything: true,
             },
             headers: {
@@ -187,7 +197,8 @@ async function getStationsState(env) {
         const services = data?.trainServices || []
         console.log(`Fetched ${services.length} services for ${s.crs} at ${nowStr}`)
 
-        const meaningfulServices = services.filter(svc => !svc.isCancelled)
+        const meaningfulServices = services.filter(svc => !svc.isCancelled && svc.atd)
+        console.log(`Filtered down to ${meaningfulServices.length} meaningful services for ${s.crs}`)
         const platformedServices = meaningfulServices.filter(svc => !!svc.platform)
         const platformedPercentage =
           meaningfulServices.length > 0 ? Math.round((platformedServices.length * 100) / meaningfulServices.length) : null
@@ -195,12 +206,16 @@ async function getStationsState(env) {
         return {
           ...s,
           platformedPercentage,
+          totalServices: meaningfulServices.length,
+          platformedServices: platformedServices.length,
         }
       } catch (e) {
         console.error(`Failed to fetch data for ${s.crs}:`, e)
         return {
           ...s,
           platformedPercentage: null,
+          totalServices: 0,
+          platformedServices: 0,
         }
       }
     })(),
@@ -220,7 +235,7 @@ export default {
       return new Response(JSON.stringify({ stations: stationsState }), {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=60', // Cache for 1 minute
+          'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
         },
       })
     }
