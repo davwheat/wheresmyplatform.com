@@ -172,7 +172,7 @@ async function getStationsState(env) {
           `https://api1.raildata.org.uk/1010-live-departure-board---staff-version1_0/LDBSVWS/api/20220120/GetDepartureBoardByCRS/${s.crs}/${nowStr}?${query}`,
           {
             cf: {
-              cacheTtl: 60,
+              cacheTtl: 15 * 60,
               cacheEverything: true,
             },
             headers: {
@@ -188,7 +188,8 @@ async function getStationsState(env) {
         const services = data?.trainServices || []
         console.log(`Fetched ${services.length} services for ${s.crs} at ${nowStr}`)
 
-        const meaningfulServices = services.filter(svc => !svc.isCancelled)
+        const meaningfulServices = services.filter(svc => !svc.isCancelled && svc.atd)
+        console.log(`Filtered down to ${meaningfulServices.length} meaningful services for ${s.crs}`)
         const platformedServices = meaningfulServices.filter(svc => !!svc.platform)
         const platformedPercentage =
           meaningfulServices.length > 0 ? Math.round((platformedServices.length * 100) / meaningfulServices.length) : null
@@ -221,7 +222,7 @@ export default {
       return new Response(JSON.stringify({ stations: stationsState }), {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=60', // Cache for 1 minute
+          'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
         },
       })
     }
