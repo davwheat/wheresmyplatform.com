@@ -260,7 +260,7 @@ async function updatePlatformingData(abortController) {
 
       row.innerHTML = `
         <td>${stn.name}</td>
-        <td><span class="percentage">${stn.platformedPercentage || 0}%</span> of services</td>
+        <td><span class="percentage">${stn.platformedPercentage || 0}%</span> of services (${stn.platformedServices || 0} of ${stn.totalServices || 0})</td>
       `
       tableBody.appendChild(row)
     })

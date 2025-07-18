@@ -206,12 +206,16 @@ async function getStationsState(env) {
         return {
           ...s,
           platformedPercentage,
+          totalServices: meaningfulServices.length,
+          platformedServices: platformedServices.length,
         }
       } catch (e) {
         console.error(`Failed to fetch data for ${s.crs}:`, e)
         return {
           ...s,
           platformedPercentage: null,
+          totalServices: 0,
+          platformedServices: 0,
         }
       }
     })(),
