@@ -1,7 +1,24 @@
+let updateInterval = null
+const darkMode = window.matchMedia('(prefers-color-scheme: dark)')
+
+function getMapStyle() {
+  return darkMode.matches ? '/map-styles/osm-dark-style.json' : '/map-styles/osm-bright-style.json'
+}
+
+const greenCutoffPct = 80
+const yellowCutoffPct = 35
+
+const checkImg = new Image()
+checkImg.src = '/check.svg'
+const warningImg = new Image()
+warningImg.src = '/warning.svg'
+const errorImg = new Image()
+errorImg.src = '/error.svg'
+
 const map = new maplibregl.Map({
   container: 'map',
-  style: '/map-styles/osm-bright-style.json',
-  center: [4.39097, 54.64657],
+  style: getMapStyle(),
+  center: [0, 0],
   zoom: 12,
   interactive: false,
   attributionControl: false,
@@ -10,6 +27,13 @@ const map = new maplibregl.Map({
     customAttribution: ['© OpenStreetMap contributors'],
   }),
 )
+
+darkMode.addEventListener('change', e => {
+  map.setStyle(getMapStyle())
+
+  // Reset the marker layers
+  setUpUpdater()
+})
 
 function fitBounds() {
   map.fitBounds(
@@ -71,17 +95,46 @@ function createMarker() {
       context.clearRect(0, 0, this.width, this.height)
       context.beginPath()
       context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2)
-      context.fillStyle = this.__platformPct > 70 ? `rgba(10, 181, 10, ${1 - t})` : `rgba(216, 34, 34, ${1 - t})`
+
+      if (this.__platformPct >= greenCutoffPct) {
+        context.fillStyle = `rgba(10, 181, 10, ${1 - t})`
+      } else if (this.__platformPct >= yellowCutoffPct) {
+        context.fillStyle = `rgba(234, 139, 4, ${1 - t})`
+      } else {
+        context.fillStyle = `rgba(216, 34, 34, ${1 - t})`
+      }
       context.fill()
 
       // draw inner circle
       context.beginPath()
       context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2)
-      context.fillStyle = this.__platformPct > 70 ? 'rgba(10, 181, 10, 1)' : 'rgba(216, 34, 34, 1)'
-      context.strokeStyle = 'white'
+      if (this.__platformPct >= greenCutoffPct) {
+        context.fillStyle = 'rgba(10, 181, 10, 1)'
+      } else if (this.__platformPct >= yellowCutoffPct) {
+        context.fillStyle = 'rgba(234, 139, 4, 1)'
+      } else {
+        context.fillStyle = 'rgba(216, 34, 34, 1)'
+      }
+      if (this.__platformPct >= greenCutoffPct) {
+        context.strokeStyle = 'color-mix(in srgb, rgba(10, 181, 10, 1), black 20%)'
+      } else if (this.__platformPct >= yellowCutoffPct) {
+        context.strokeStyle = 'color-mix(in srgb, rgba(234, 139, 4, 1), black 20%)'
+      } else {
+        context.strokeStyle = 'color-mix(in srgb, rgba(216, 34, 34, 1), black 20%)'
+      }
       context.lineWidth = 4
       context.fill()
       context.stroke()
+
+      // add check/warning/error icons
+      const iconSize = 42
+      if (this.__platformPct >= greenCutoffPct) {
+        context.drawImage(checkImg, (this.width - iconSize) / 2, (this.height - iconSize) / 2, iconSize, iconSize)
+      } else if (this.__platformPct >= yellowCutoffPct) {
+        context.drawImage(warningImg, (this.width - iconSize) / 2, (this.height - iconSize) / 2, iconSize, iconSize)
+      } else {
+        context.drawImage(errorImg, (this.width - iconSize) / 2, (this.height - iconSize) / 2, iconSize, iconSize)
+      }
 
       // update this image's data with data from the canvas
       this.data = context.getImageData(0, 0, this.width, this.height).data
@@ -181,12 +234,42 @@ async function updatePlatformingData(abortController) {
         marker.__platformPct = stn.platformedPercentage
       }
     })
+
+    // Update table
+    sortedStations = [...data.stations]
+
+    // sort by low to high pct, then by name
+    sortedStations.sort((a, b) => {
+      if (a.platformedPercentage === b.platformedPercentage) {
+        return a.name.localeCompare(b.name)
+      }
+      return a.platformedPercentage - b.platformedPercentage
+    })
+
+    const tableBody = document.querySelector('#stationList tbody')
+    tableBody.innerHTML = ''
+    sortedStations.forEach(stn => {
+      const row = document.createElement('tr')
+      if (stn.platformedPercentage >= greenCutoffPct) {
+        row.classList.add('green')
+      } else if (stn.platformedPercentage >= yellowCutoffPct) {
+        row.classList.add('yellow')
+      } else {
+        row.classList.add('red')
+      }
+
+      row.innerHTML = `
+        <td>${stn.name}</td>
+        <td><span class="percentage">${stn.platformedPercentage || 0}%</span> of services</td>
+      `
+      tableBody.appendChild(row)
+    })
   } catch (error) {
     console.error('Error fetching platforming data:', error)
   }
 }
 
-map.once('load', () => {
+function setUpUpdater() {
   let ac = null
   function performUpdate() {
     if (ac) {
@@ -196,6 +279,24 @@ map.once('load', () => {
     updatePlatformingData(ac)
   }
 
-  setInterval(performUpdate, 60000)
+  if (updateInterval) {
+    clearInterval(updateInterval)
+  }
+
+  // Clear existing markers - https://github.com/mapbox/mapbox-gl-js/issues/4006
+  Object.keys(markers).forEach(k => {
+    map.removeLayer(`layer-${k}`)
+    map.removeSource(`source-${k}`)
+    map.removeImage(`img-${k}`)
+    delete markers[k]
+  })
+
+  updateInterval = setInterval(performUpdate, 60000)
   performUpdate()
+}
+
+map.on('load', () => {
+  console.log('Map loaded, setting up updater');
+
+  setUpUpdater()
 })
