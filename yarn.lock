@@ -62,7 +62,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:^4.20250321.0":
+"@cloudflare/workers-types@npm:^4.20250715.0":
   version: 4.20250715.0
   resolution: "@cloudflare/workers-types@npm:4.20250715.0"
   checksum: 10/6c2ea1b1d2ccdf7e3cb7be1a72a6071ed1eca5dbb3fac34c4d178f58bdb6c6c715b213b3ae04b5a4e9fdef44763c0af39b5724ab004c4834b0128b2e6836682a
@@ -718,39 +718,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csv-generate@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "csv-generate@npm:4.5.0"
-  checksum: 10/96a0de36b5a339f0d01cb404e0861546f9c7c9ec36da6118d2390f96f7931715da14ba03667e805a86acc333a73a7c0d2f58a9cf05b4db46144a0e73699907e6
-  languageName: node
-  linkType: hard
-
-"csv-parse@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "csv-parse@npm:6.1.0"
-  checksum: 10/607d92611435fdfb7631242644a2582bfb218fad8c6c6d6416db31647c2e63a3110f16c9837de6baaa3edf318212765cfc6e72d672d99690fd7f565d6c93d6f4
-  languageName: node
-  linkType: hard
-
-"csv-stringify@npm:^6.6.0":
-  version: 6.6.0
-  resolution: "csv-stringify@npm:6.6.0"
-  checksum: 10/8ff6340c9352e85974961ee8719de1dc725e7d2cb7085a02c641bbe71a2c3eec6868e2bb296201d239d855df280952da5336cfd01a46db0c66e54597d753e7d6
-  languageName: node
-  linkType: hard
-
-"csv@npm:^6.3.11":
-  version: 6.4.1
-  resolution: "csv@npm:6.4.1"
-  dependencies:
-    csv-generate: "npm:^4.5.0"
-    csv-parse: "npm:^6.1.0"
-    csv-stringify: "npm:^6.6.0"
-    stream-transform: "npm:^3.4.0"
-  checksum: 10/e7cfeae00c47ef746d8e7b915ae9ddc35a562befdddb50afbdeb6b34c8e67421319f7d3f02e896798011d8439932e394de2d4b81aed1458083b1a8aed9fcc24e
-  languageName: node
-  linkType: hard
-
 "debug@npm:4, debug@npm:^4.3.4":
   version: 4.4.1
   resolution: "debug@npm:4.4.1"
@@ -1378,7 +1345,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.5.3":
+"prettier@npm:^3.6.2":
   version: 3.6.2
   resolution: "prettier@npm:3.6.2"
   bin:
@@ -1579,13 +1546,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-transform@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "stream-transform@npm:3.4.0"
-  checksum: 10/e93f3d3530527610451c52b6d27f64d382d5bc382b6e13658061c987e0c0b16b3da6644ffc158ce45e8fb62a456417383c2329a28b81abacbc2cf94bc46d2e26
-  languageName: node
-  linkType: hard
-
 "string-width-cjs@npm:string-width@^4.2.0, string-width@npm:^4.1.0":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
@@ -1664,7 +1624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.8.2":
+"typescript@npm:^5.8.3":
   version: 5.8.3
   resolution: "typescript@npm:5.8.3"
   bin:
@@ -1674,7 +1634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
   version: 5.8.3
   resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:
@@ -1733,11 +1693,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "visited-stations-map@workspace:."
   dependencies:
-    "@cloudflare/workers-types": "npm:^4.20250321.0"
-    csv: "npm:^6.3.11"
-    prettier: "npm:^3.5.3"
-    typescript: "npm:^5.8.2"
-    wrangler: "npm:^4.4.0"
+    "@cloudflare/workers-types": "npm:^4.20250715.0"
+    prettier: "npm:^3.6.2"
+    typescript: "npm:^5.8.3"
+    wrangler: "npm:^4.25.0"
   languageName: unknown
   linkType: soft
 
@@ -1789,7 +1748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:^4.4.0":
+"wrangler@npm:^4.25.0":
   version: 4.25.0
   resolution: "wrangler@npm:4.25.0"
   dependencies:

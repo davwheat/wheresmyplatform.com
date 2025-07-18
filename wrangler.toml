@@ -9,3 +9,6 @@ main = "api/worker.ts"
 directory = "./html"
 not_found_handling = "404-page"
 binding = "ASSETS"
+
+[observability.logs]
+enabled = true

@@ -9,3 +9,5 @@ node_modules/
 .pnp.*
 
 .wrangler/
+
+.dev.vars
