@@ -163,7 +163,7 @@ async function getStationsState(env) {
           `https://api1.raildata.org.uk/1010-live-departure-board---staff-version1_0/LDBSVWS/api/20220120/GetDepartureBoardByCRS/${s.crs}/${nowStr}?${query}`,
           {
             cf: {
-              cacheTtl: 1,
+              cacheTtl: 60,
               cacheEverything: true,
             },
             headers: {
@@ -212,7 +212,7 @@ export default {
       return new Response(JSON.stringify({ stations: stationsState }), {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=1', // Cache for 1 minute
+          'Cache-Control': 'public, max-age=60', // Cache for 1 minute
         },
       })
     }
