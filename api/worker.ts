@@ -5,7 +5,7 @@ const StationsToCheck = [
     lat: 51.53111,
     lon: -0.123,
     tocFilter: null,
-    timeWindow: 360,
+    timeWindow: 400,
   },
   {
     crs: 'STP',
@@ -13,7 +13,7 @@ const StationsToCheck = [
     lat: 51.53336,
     lon: -0.12746,
     tocFilter: null,
-    timeWindow: 240,
+    timeWindow: 180,
   },
   {
     crs: 'PAD',
@@ -29,7 +29,7 @@ const StationsToCheck = [
     lat: 51.50368,
     lon: -0.0839,
     tocFilter: null,
-    timeWindow: 180,
+    timeWindow: 90,
   },
   {
     crs: 'WAT',
@@ -44,7 +44,8 @@ const StationsToCheck = [
     name: 'Liverpool Street',
     lat: 51.51864,
     lon: -0.081,
-    tocFilter: null,
+    // Cannot filter by more than one TOC, so the Overground can be irrelevant
+    tocFilter: 'LE',
     timeWindow: 180,
   },
   {
@@ -69,7 +70,7 @@ const StationsToCheck = [
     lat: 51.52304,
     lon: -0.16291,
     tocFilter: null,
-    timeWindow: 360,
+    timeWindow: 480,
   },
   {
     crs: 'CHX',
@@ -85,7 +86,7 @@ const StationsToCheck = [
     lat: 51.51131,
     lon: -0.07732,
     tocFilter: null,
-    timeWindow: 300,
+    timeWindow: 600,
   },
   {
     crs: 'CST',
@@ -109,7 +110,7 @@ const StationsToCheck = [
     lat: 51.51405,
     lon: -0.10348,
     tocFilter: null,
-    timeWindow: 300,
+    timeWindow: 260,
   },
   {
     crs: 'MOG',
@@ -117,7 +118,7 @@ const StationsToCheck = [
     lat: 51.5185,
     lon: -0.08841,
     tocFilter: null,
-    timeWindow: 300,
+    timeWindow: 480,
   },
   {
     crs: 'WAE',
@@ -133,7 +134,7 @@ const StationsToCheck = [
     lat: 51.49405,
     lon: -0.09869,
     tocFilter: null,
-    timeWindow: 180,
+    timeWindow: 300,
   },
 ]
 
