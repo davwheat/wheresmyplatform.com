@@ -1,30 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Where's my platform?</title>
-    <meta
-      name="description"
-      content="Check which London stations aren't reporting platform numbers correctly."
-    />
+    <meta name="description" content="Check which London stations aren't reporting platform numbers correctly." />
 
     <link rel="stylesheet" href="styles.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet" />
 
-    <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js"></script>
-    <link
-      href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css"
-      rel="stylesheet"
-    />
+    <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js" defer></script>
+    <link href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <script src="map.js" defer></script>
   </head>
   <body>
-    <h1>WIP</h1>
+    <div id="topPage">
+      <header>
+        <h1>Where's my platform?</h1>
+        <p>
+          Some large stations often fail to provide platform information for arriving/departing services reliably, meaning your favourite railway
+          app can't tell you where to go to catch your train.
+        </p>
+      </header>
+
+      <div id="map"></div>
+
+      <div id="scrollEncourager">
+        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#000">
+          <path
+            d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"
+          />
+        </svg>
+      </div>
+    </div>
+
+    <main>
+      <section>
+        <h2>What's going on?</h2>
+
+        <p>
+          The rail industry uses a system called <a href="https://www.nationalrail.co.uk/developers/darwin-data-feeds/">Darwin</a> to provide
+          real-time information about trains, including platform numbers, delays, cancellations, diversions and more. Typically this information
+          is detected automatically when trains enter or exit stations, but at larger stations platform information is artificially hidden until
+          a predetermined "boarding time".
+        </p>
+
+        <p>
+          At these stations, it is up to staff to unhide the platform information when it is time to board a service, and the local customer
+          information system (CIS) will then update the platform information on the station displays, and within the wider Darwin system so that
+          third parties can use and display the details to users.
+        </p>
+
+        <p>
+          Frustratingly, some stations are failing to connect to the wider Darwin system, meaning that when these changes are made, they are not
+          propogated to users of the open data.
+        </p>
+      </section>
+
+      <section>
+        <h2>What does that mean for me?</h2>
+
+        <p>
+          Do you track your train with an app? Or using nationalrail.co.uk? If so, you won't be seeing platform numbers for your trains. If
+          you're in a rush, that could be the difference between making and missing your train.
+        </p>
+
+        <p>
+          And, for the open data community, it means that we can't make the most of
+          <a href="https://wiki.openraildata.com/index.php/Projects">our projects</a>.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Platform information (or lack thereof) provided
+        <a href="https://www.nationalrail.co.uk/developers/darwin-data-feeds/">under license by National Rail</a>.
+      </p>
+
+      <img id="nre" src="/nre_powered.png" alt="Powered by National Rail Enquiries" />
+    </footer>
   </body>
 </html>
