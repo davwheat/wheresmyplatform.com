@@ -158,7 +158,7 @@ async function updatePlatformingData(abortController) {
           const stationCoordsPx = map.project(e.features[0].geometry.coordinates)
           const mousePoint = e.point
           const distance = Math.sqrt(Math.pow(stationCoordsPx.x - mousePoint.x, 2) + Math.pow(stationCoordsPx.y - mousePoint.y, 2))
-          
+
           if (distance > 10.5) {
             popup.remove()
             return

@@ -138,23 +138,32 @@ const StationsToCheck = [
   },
 ]
 
+const fmt = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/London',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+})
+
 async function getStationsState(env) {
   const apiKey = env.RDM_LDBSVWS_GetDepBoardWithDetails_API_KEY
 
   const promises = StationsToCheck.map(s =>
     (async () => {
       try {
-        const now = new Date(Date.now() - s.timeWindow * 60 * 1000)
-        const londonTime = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Europe/London',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }).formatToParts(now)
+        let nownow = Date.now()
+
+        // If it's before 6am, fetch data for the previous day
+        if ((fmt.formatToParts(new Date(nownow)).find(p => p.type === 'hour')?.value ?? '99') < '06') {
+          nownow -= 9 * 60 * 60 * 1000 // Subtract 9 hours
+        }
+
+        const now = new Date(nownow - s.timeWindow * 60 * 1000)
+        const londonTime = fmt.formatToParts(now)
         const nowStr = `${londonTime.find(p => p.type === 'year')?.value}${londonTime.find(p => p.type === 'month')?.value}${londonTime.find(p => p.type === 'day')?.value}T${londonTime.find(p => p.type === 'hour')?.value}${londonTime.find(p => p.type === 'minute')?.value}${londonTime.find(p => p.type === 'second')?.value}`
 
         console.log(`Fetching data for ${s.crs} at ${nowStr}...`)
