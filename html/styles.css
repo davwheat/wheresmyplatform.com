@@ -8,6 +8,10 @@
     --content-color: #eee;
     --background-color: #040604;
   }
+
+  :any-link {
+    color: rgb(0, 99, 197);
+  }
 }
 
 html,
@@ -311,4 +315,8 @@ footer p {
 
 .maplibregl-ctrl-attrib {
   color: black;
+}
+
+:any-link {
+  color: hsla(210, 100%, 50%, 1);
 }
