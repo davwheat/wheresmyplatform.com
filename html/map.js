@@ -296,7 +296,7 @@ function setUpUpdater() {
 }
 
 map.on('load', () => {
-  console.log('Map loaded, setting up updater');
+  console.log('Map loaded, setting up updater')
 
   setUpUpdater()
 })
