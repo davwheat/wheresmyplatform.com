@@ -234,6 +234,7 @@ async function updatePlatformingData(abortController) {
         marker.__platformPct = stn.platformedPercentage
       }
     })
+    document.querySelector('#map').classList.remove('loading')
 
     // Update table
     sortedStations = [...data.stations]

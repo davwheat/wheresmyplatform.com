@@ -29,7 +29,7 @@
         <p>London Terminals with platform allocations being reported in open data</p>
       </header>
 
-      <div id="map"></div>
+      <div id="map" class="loading"></div>
 
       <div id="scrollEncourager">
         <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="currentColor">
@@ -89,12 +89,12 @@
           <thead>
             <tr>
               <th>Station</th>
-              <th>Has platform info</th>
+              <th colspan="2">Has platform info</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colspan="2">
+              <td colspan="3">
                 <div class="loader"></div>
               </td>
             </tr>
