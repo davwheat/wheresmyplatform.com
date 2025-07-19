@@ -1,16 +1,19 @@
 :root {
   --content-color: #000;
   --background-color: #fff;
+
+  --link-color: hsla(210, 100%, 50%, 1);
+
+  --th-background: #000;
+  --th-color: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --content-color: #eee;
     --background-color: #040604;
-  }
 
-  :any-link {
-    color: rgb(0, 99, 197);
+    --link-color: rgb(75, 156, 236);
   }
 }
 
@@ -108,6 +111,21 @@ header {
   flex-grow: 1;
   position: relative;
   z-index: 10;
+}
+
+#map.loading::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  --transform: translate(-50%, -50%);
+  border: 4px solid var(--content-color);
+  border-right-color: transparent;
+  border-radius: 100%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
 }
 
 #scrollEncourager {
@@ -245,8 +263,9 @@ footer p {
 }
 
 #stationList thead {
-  background: var(--content-color);
-  color: var(--background-color);
+  background: var(--th-background);
+  color: var(--th-color);
+  border-bottom: 1px solid currentColor;
 }
 
 #stationList th:first-child {
@@ -263,7 +282,11 @@ footer p {
 }
 
 #stationList td {
-  border: currentColor solid 1px;
+  border: none;
+}
+
+#stationList td:last-child {
+  padding-right: 0;
 }
 
 #stationList tr td:first-child {
@@ -294,10 +317,10 @@ footer p {
 
 @keyframes spin {
   0% {
-    transform: rotate(0deg);
+    transform: var(--transform,) rotate(0deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: var(--transform,) rotate(360deg);
   }
 }
 
@@ -313,10 +336,34 @@ footer p {
   background: rgba(255, 0, 0, 0.2);
 }
 
+#stationList tbody tr::after {
+  content: '';
+  display: table-cell;
+  width: 1ch;
+  height: 1ch;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+#stationList tr.green::after {
+  content: '';
+  background: url('/check.svg') no-repeat center center;
+}
+
+#stationList tr.yellow::after {
+  content: '';
+  background: url('/warning.svg') no-repeat center center;
+}
+
+#stationList tr.red::after {
+  content: '';
+  background: url('/error.svg') no-repeat center center;
+}
+
 .maplibregl-ctrl-attrib {
   color: black;
 }
 
 :any-link {
-  color: hsla(210, 100%, 50%, 1);
+  color: var(--link-color);
 }
