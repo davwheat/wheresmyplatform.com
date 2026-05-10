@@ -8,11 +8,11 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,less,mdx,html,css}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,less,mdx,html,css}\""
   },
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.14.1",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250715.0",
-    "prettier": "^3.6.2",
-    "typescript": "^5.8.3",
-    "wrangler": "^4.25.0"
+    "@cloudflare/workers-types": "^4.20260510.1",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.90.0"
   }
 }
