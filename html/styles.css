@@ -336,6 +336,15 @@ footer p {
   background: rgba(255, 0, 0, 0.2);
 }
 
+#stationList tr.nodata {
+  background: color-mix(in srgb, var(--content-color), transparent 85%);
+}
+
+#stationList .nodata-text {
+  font-style: italic;
+  opacity: 0.7;
+}
+
 #stationList tbody tr::after {
   content: '';
   display: table-cell;
