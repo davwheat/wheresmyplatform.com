@@ -2,7 +2,7 @@ let updateInterval = null
 const darkMode = window.matchMedia('(prefers-color-scheme: dark)')
 
 function getMapStyle() {
-  return darkMode.matches ? '/map-styles/osm-dark-style.json' : '/map-styles/osm-bright-style.json'
+  return darkMode.matches ? '/map-styles/rail-dark.json' : '/map-styles/rail-light.json'
 }
 
 const greenCutoffPct = 80
