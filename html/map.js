@@ -91,12 +91,16 @@ function createMarker() {
       const outerRadius = (size / 2) * 0.7 * t + radius
       const context = this.context
 
+      const noData = this.__platformPct === null || this.__platformPct === undefined
+
       // draw outer circle
       context.clearRect(0, 0, this.width, this.height)
       context.beginPath()
       context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2)
 
-      if (this.__platformPct >= greenCutoffPct) {
+      if (noData) {
+        context.fillStyle = `rgba(140, 140, 140, ${1 - t})`
+      } else if (this.__platformPct >= greenCutoffPct) {
         context.fillStyle = `rgba(10, 181, 10, ${1 - t})`
       } else if (this.__platformPct >= yellowCutoffPct) {
         context.fillStyle = `rgba(234, 139, 4, ${1 - t})`
@@ -108,14 +112,18 @@ function createMarker() {
       // draw inner circle
       context.beginPath()
       context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2)
-      if (this.__platformPct >= greenCutoffPct) {
+      if (noData) {
+        context.fillStyle = 'rgba(140, 140, 140, 1)'
+      } else if (this.__platformPct >= greenCutoffPct) {
         context.fillStyle = 'rgba(10, 181, 10, 1)'
       } else if (this.__platformPct >= yellowCutoffPct) {
         context.fillStyle = 'rgba(234, 139, 4, 1)'
       } else {
         context.fillStyle = 'rgba(216, 34, 34, 1)'
       }
-      if (this.__platformPct >= greenCutoffPct) {
+      if (noData) {
+        context.strokeStyle = 'color-mix(in srgb, rgba(140, 140, 140, 1), black 20%)'
+      } else if (this.__platformPct >= greenCutoffPct) {
         context.strokeStyle = 'color-mix(in srgb, rgba(10, 181, 10, 1), black 20%)'
       } else if (this.__platformPct >= yellowCutoffPct) {
         context.strokeStyle = 'color-mix(in srgb, rgba(234, 139, 4, 1), black 20%)'
@@ -126,9 +134,11 @@ function createMarker() {
       context.fill()
       context.stroke()
 
-      // add check/warning/error icons
+      // add check/warning/error icons (none for no-data)
       const iconSize = 42
-      if (this.__platformPct >= greenCutoffPct) {
+      if (noData) {
+        // no icon
+      } else if (this.__platformPct >= greenCutoffPct) {
         context.drawImage(checkImg, (this.width - iconSize) / 2, (this.height - iconSize) / 2, iconSize, iconSize)
       } else if (this.__platformPct >= yellowCutoffPct) {
         context.drawImage(warningImg, (this.width - iconSize) / 2, (this.height - iconSize) / 2, iconSize, iconSize)
@@ -239,8 +249,11 @@ async function updatePlatformingData(abortController) {
     // Update table
     sortedStations = [...data.stations]
 
-    // sort by low to high pct, then by name
+    // sort by low to high pct, then by name; no-data rows last
     sortedStations.sort((a, b) => {
+      const aNoData = a.totalServices === 0 || a.platformedPercentage === null
+      const bNoData = b.totalServices === 0 || b.platformedPercentage === null
+      if (aNoData !== bNoData) return aNoData ? 1 : -1
       if (a.platformedPercentage === b.platformedPercentage) {
         return a.name.localeCompare(b.name)
       }
@@ -251,7 +264,10 @@ async function updatePlatformingData(abortController) {
     tableBody.innerHTML = ''
     sortedStations.forEach(stn => {
       const row = document.createElement('tr')
-      if (stn.platformedPercentage >= greenCutoffPct) {
+      const noData = stn.totalServices === 0 || stn.platformedPercentage === null
+      if (noData) {
+        row.classList.add('nodata')
+      } else if (stn.platformedPercentage >= greenCutoffPct) {
         row.classList.add('green')
       } else if (stn.platformedPercentage >= yellowCutoffPct) {
         row.classList.add('yellow')
@@ -259,7 +275,12 @@ async function updatePlatformingData(abortController) {
         row.classList.add('red')
       }
 
-      row.innerHTML = `
+      row.innerHTML = noData
+        ? `
+        <td>${stn.name}</td>
+        <td><span class="nodata-text">No recent data</span></td>
+      `
+        : `
         <td>${stn.name}</td>
         <td><span class="percentage">${stn.platformedPercentage || 0}%</span> of services (${stn.platformedServices || 0} of ${stn.totalServices || 0})</td>
       `
